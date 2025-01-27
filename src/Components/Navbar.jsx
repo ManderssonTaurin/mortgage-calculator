@@ -1,13 +1,32 @@
-import "./Navbar.css"
+import React from "react";
+import { Box, Typography, Container } from "@mui/material";
 
 const Navbar = () => {
-    return ( 
-        <div className="header">
+  return (
+    <Box
+      
+      sx={{
+        width: "100%",
+        height: "60px",
+        backgroundColor: "#146cbd",
+        display: "flex",
+        alignItems: "center",
+        paddingLeft: "20px",
+      }}
+    >
+      <Container>
+        <Typography
+          variant="h6"
+          sx={{
+            color: "aliceblue",
+            fontSize: "25px",
+          }}
+        >
+          Bolånekalkyl
+        </Typography>
+      </Container>
+    </Box>
+  );
+};
 
-
-
-        </div>
-     );
-}
- 
 export default Navbar;
