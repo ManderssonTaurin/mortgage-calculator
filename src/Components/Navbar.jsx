@@ -8,7 +8,7 @@ const Navbar = () => {
       sx={{
         width: "100%",
         height: "60px",
-        backgroundColor: "#146cbd",
+        backgroundColor: "#54d4a0",
         display: "flex",
         alignItems: "center",
         paddingLeft: "20px",
