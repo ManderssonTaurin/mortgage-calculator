@@ -32,6 +32,9 @@ const Calculator = () => {
     const numericDeposit = parseInt(deposit.replace(/\s/g, ""), 10);
     const numericInterest = parseFloat(interest);
     const numericMonthlyIncome = parseInt(monthlyIncome.replace(/\s/g, ""), 10);
+    console.log(numericPropertyValue); // Correctly logs: 2000000
+    console.log(numericInterest)
+    console.log(numericDeposit)
 
     if (
       isNaN(numericPropertyValue) ||
@@ -47,6 +50,9 @@ const Calculator = () => {
     const loanAmount = numericPropertyValue - numericDeposit;
     const annualIncome = numericMonthlyIncome * 12;
     const debtToIncomeRatio = loanAmount / annualIncome;
+    console.log("loanamount", loanAmount)
+    console.log("annualincome", annualIncome); // Should be 840000
+    console.log("debtoincomeRatio", debtToIncomeRatio); // Should be ~2.02
 
     const ltv = loanAmount / numericPropertyValue;
     let annualAmortizationRate = 0;
@@ -60,12 +66,16 @@ const Calculator = () => {
     if (debtToIncomeRatio > 4.5) {
       annualAmortizationRate += 0.01;
     }
+    console.log("ltv", ltv)
+    console.log("annualAmortizationRate", annualAmortizationRate); 
 
     const monthlyInterestValue = (loanAmount * (numericInterest / 100)) / 12;
     const monthlyAmortizationValue = (loanAmount * annualAmortizationRate) / 12;
 
-    setMonthlyInterest(monthlyInterestValue.toFixed(2));
-    setMonthlyAmortization(monthlyAmortizationValue.toFixed(2));
+    console.log({monthlyInterestValue, monthlyAmortizationValue})
+
+    setMonthlyInterest(monthlyInterestValue.toFixed(0));
+    setMonthlyAmortization(monthlyAmortizationValue.toFixed(0));
   };
 
   const minimumDeposit = calculateMinimumDeposit();
@@ -74,7 +84,7 @@ const Calculator = () => {
     <Box sx={{ p: 2 }}>
       <Grid container spacing={1}>
         {/* Left Column: Input Fields */}
-        <Grid item xs={6}>
+        <Grid item xs={12} md={6}>
           <Box>
             <TextField
               label="Bostadens värde"
@@ -144,11 +154,19 @@ const Calculator = () => {
         <Divider
           orientation="vertical"
           flexItem
-          sx={{ mx: 2, borderColor: "grey.400" }}
+          sx={{ 
+            mx: { xs: 0, md: 2 }, // Hide horizontal margin on small screens
+            borderColor: "grey.400",
+            display: { xs: "none", md: "block" }, // Hide divider on small screens
+           }}
         />
 
+
+
         {/* Right Column: Results */}
-        <Grid item xs={5}>
+        <Grid xs={12} md={5}
+        
+        >
           {monthlyInterest !== null && monthlyAmortization !== null && (
             <Box>
               <Typography variant="h6" sx={{ mt: 5 }}>
