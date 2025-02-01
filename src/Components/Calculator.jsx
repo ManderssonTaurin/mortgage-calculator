@@ -1,60 +1,47 @@
 import React, { useState } from "react";
-import { TextField, Box, Button, Typography, Divider, Grid } from "@mui/material";
+import { TextField, Box, Button, Typography, Divider, Grid, Slider } from "@mui/material";
 
 const Calculator = () => {
-  const [propertyValue, setPropertyValue] = useState("");
-  const [deposit, setDeposit] = useState("");
-  const [monthlyIncome, setMonthlyIncome] = useState("");
-  const [interest, setInterest] = useState("");
+  // Initial states
+  const [propertyValue, setPropertyValue] = useState(2000000);
+  const [deposit, setDeposit] = useState(300000);
+  const [monthlyIncome, setMonthlyIncome] = useState(70000);
+  const [interest, setInterest] = useState(3.4);
   const [monthlyInterest, setMonthlyInterest] = useState(null);
   const [monthlyAmortization, setMonthlyAmortization] = useState(null);
 
+  // Function to format numbers with spaces
   const formatNumberWithSpaces = (value) => {
-    const numericValue = value.replace(/\D/g, "");
-    return numericValue.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ");
+    return Number(value)
+      .toFixed(0) // Ensure whole number format
+      .replace(/\B(?=(\d{3})+(?!\d))/g, " "); // Add spaces for thousands
   };
 
+  // Generic handler for input fields
   const handleInputChange = (e, setState) => {
-    const formattedValue = formatNumberWithSpaces(e.target.value);
-    setState(formattedValue);
-  };
-
-  const calculateMinimumDeposit = () => {
-    const numericPropertyValue = parseInt(propertyValue.replace(/\s/g, ""), 10);
-    if (!isNaN(numericPropertyValue)) {
-      return parseInt(numericPropertyValue * 0.15, 10); // Ensure it's a number
+    const numericValue = parseFloat(e.target.value.replace(/\s/g, "").replace(",", "."));
+    if (!isNaN(numericValue)) {
+      setState(numericValue);
     }
-    return null;
   };
 
+  // Generic handler for sliders
+  const handleSliderChange = (setState) => (event, newValue) => {
+    setState(newValue);
+  };
+
+  // Calculate amortization and interest
   const calculateAmortizationAndInterest = () => {
-    const numericPropertyValue = parseInt(propertyValue.replace(/\s/g, ""), 10);
-    const numericDeposit = parseInt(deposit.replace(/\s/g, ""), 10);
-    const numericInterest = parseFloat(interest);
-    const numericMonthlyIncome = parseInt(monthlyIncome.replace(/\s/g, ""), 10);
-    console.log(numericPropertyValue); // Correctly logs: 2000000
-    console.log(numericInterest)
-    console.log(numericDeposit)
+    console.log("Calculating amortization and interest...");
 
-    if (
-      isNaN(numericPropertyValue) ||
-      isNaN(numericDeposit) ||
-      isNaN(numericInterest) ||
-      isNaN(numericMonthlyIncome)
-    ) {
-      setMonthlyInterest(null);
-      setMonthlyAmortization(null);
-      return;
-    }
-
-    const loanAmount = numericPropertyValue - numericDeposit;
-    const annualIncome = numericMonthlyIncome * 12;
+    const loanAmount = propertyValue - deposit;
+    const annualIncome = monthlyIncome * 12;
     const debtToIncomeRatio = loanAmount / annualIncome;
-    console.log("loanamount", loanAmount)
-    console.log("annualincome", annualIncome); // Should be 840000
-    console.log("debtoincomeRatio", debtToIncomeRatio); // Should be ~2.02
+    console.log("Loan Amount:", loanAmount);
+    console.log("Annual Income:", annualIncome);
+    console.log("Debt-to-Income Ratio:", debtToIncomeRatio);
 
-    const ltv = loanAmount / numericPropertyValue;
+    const ltv = loanAmount / propertyValue;
     let annualAmortizationRate = 0;
 
     if (ltv > 0.7) {
@@ -66,128 +53,128 @@ const Calculator = () => {
     if (debtToIncomeRatio > 4.5) {
       annualAmortizationRate += 0.01;
     }
-    console.log("ltv", ltv)
-    console.log("annualAmortizationRate", annualAmortizationRate); 
 
-    const monthlyInterestValue = (loanAmount * (numericInterest / 100)) / 12;
+    console.log("LTV:", ltv);
+    console.log("Annual Amortization Rate:", annualAmortizationRate);
+
+    const monthlyInterestValue = (loanAmount * (interest / 100)) / 12;
     const monthlyAmortizationValue = (loanAmount * annualAmortizationRate) / 12;
 
-    console.log({monthlyInterestValue, monthlyAmortizationValue})
+    console.log("Monthly Interest Value:", monthlyInterestValue);
+    console.log("Monthly Amortization Value:", monthlyAmortizationValue);
 
-    setMonthlyInterest(monthlyInterestValue.toFixed(0));
-    setMonthlyAmortization(monthlyAmortizationValue.toFixed(0));
+    // Check for invalid values before updating state
+    if (!isNaN(monthlyInterestValue) && !isNaN(monthlyAmortizationValue)) {
+      setMonthlyInterest(monthlyInterestValue.toFixed(0));
+      setMonthlyAmortization(monthlyAmortizationValue.toFixed(0));
+    } else {
+      setMonthlyInterest(null);
+      setMonthlyAmortization(null);
+    }
   };
-
-  const minimumDeposit = calculateMinimumDeposit();
 
   return (
     <Box sx={{ p: 2 }}>
-      <Grid container spacing={1}>
+      <Grid container spacing={2}>
         {/* Left Column: Input Fields */}
         <Grid item xs={12} md={6}>
           <Box>
+            <Typography variant="h6" sx={{ mb: 1 }}>Bostadens värde</Typography>
             <TextField
-              label="Bostadens värde"
               variant="outlined"
               fullWidth
-              sx={{ mb: 5, mt: 5 }}
-              value={propertyValue}
+              sx={{ mb: 2 }}
+              value={formatNumberWithSpaces(propertyValue)}
               onChange={(e) => handleInputChange(e, setPropertyValue)}
-              inputProps={{
-                inputMode: "numeric",
-                pattern: "[0-9]*",
-              }}
+              inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
             />
-            {minimumDeposit && (
-              <Typography variant="body2" sx={{ color: "gray", mb: 5 }}>
-                Minsta kontantinsats:{" "}
-                {formatNumberWithSpaces(minimumDeposit.toString())} kr
-              </Typography>
-            )}
+            <Slider
+              value={propertyValue}
+              min={500000}
+              max={15000000}
+              step={10000}
+              onChange={handleSliderChange(setPropertyValue)}
+              valueLabelDisplay="auto"
+            />
+
+            {/* Deposit */}
+            <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>Kontantinsats</Typography>
             <TextField
-              label="Kontantinsats"
               variant="outlined"
               fullWidth
-              sx={{ mb: 5 }}
-              value={deposit}
+              sx={{ mb: 2 }}
+              value={formatNumberWithSpaces(deposit)}
               onChange={(e) => handleInputChange(e, setDeposit)}
-              inputProps={{
-                inputMode: "numeric",
-                pattern: "[0-9]*",
-              }}
+              inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
             />
+            <Slider
+              value={deposit}
+              min={50000}
+              max={propertyValue}
+              step={10000}
+              onChange={handleSliderChange(setDeposit)}
+              valueLabelDisplay="auto"
+            />
+
+            {/* Monthly Income */}
+            <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>Hushållets totala månadsinkomst</Typography>
             <TextField
-              label="Hushållets totala månadsinkomst"
               variant="outlined"
               fullWidth
-              sx={{ mb: 5 }}
-              value={monthlyIncome}
+              sx={{ mb: 2 }}
+              value={formatNumberWithSpaces(monthlyIncome)}
               onChange={(e) => handleInputChange(e, setMonthlyIncome)}
-              inputProps={{
-                inputMode: "numeric",
-                pattern: "[0-9]*",
-              }}
+              inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
             />
+            <Slider
+              value={monthlyIncome}
+              min={10000}
+              max={300000}
+              step={5000}
+              onChange={handleSliderChange(setMonthlyIncome)}
+              valueLabelDisplay="auto"
+            />
+
+            {/* Interest Rate */}
+            <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>Exempelränta (%)</Typography>
             <TextField
-              label="Exempelränta (%)"
               variant="outlined"
               fullWidth
-              sx={{ mb: 5 }}
+              sx={{ mb: 2 }}
               value={interest}
-              onChange={(e) => setInterest(e.target.value)}
-              inputProps={{
-                inputMode: "numeric",
-                pattern: "[0-9]*",
-              }}
+              onChange={(e) => handleInputChange(e, setInterest)}
+              inputProps={{ inputMode: "decimal", pattern: "[0-9]+([,\\.][0-9]+)?" }}
             />
-            <Button
-              variant="contained"
-              sx={{ mt: 3 }}
-              onClick={calculateAmortizationAndInterest}
-            >
+            <Slider
+              value={interest}
+              min={0.5}
+              max={10}
+              step={0.1}
+              onChange={handleSliderChange(setInterest)}
+              valueLabelDisplay="auto"
+            />
+
+            {/* Calculate Button */}
+            <Button variant="contained" sx={{ mt: 3 }} onClick={calculateAmortizationAndInterest}>
               Beräkna
             </Button>
           </Box>
         </Grid>
 
-        {/* Vertical Divider */}
-        <Divider
-          orientation="vertical"
-          flexItem
-          sx={{ 
-            mx: { xs: 0, md: 2 }, // Hide horizontal margin on small screens
-            borderColor: "grey.400",
-            display: { xs: "none", md: "block" }, // Hide divider on small screens
-           }}
-        />
-
-
-
         {/* Right Column: Results */}
-        <Grid xs={12} md={5}
-        
-        >
-          {monthlyInterest !== null && monthlyAmortization !== null && (
+        <Grid item xs={12} md={6}>
+          {(monthlyInterest !== null && monthlyAmortization !== null) ? (
             <Box>
-              <Typography variant="h6" sx={{ mt: 5 }}>
-                Månatlig ränta:
-              </Typography>
-              <Typography variant="body1">
-                {monthlyInterest
-                  ? formatNumberWithSpaces(monthlyInterest)
-                  : "N/A"}{" "}
-                kr
-              </Typography>
-              <Typography variant="h6" sx={{ mt: 3 }}>
-                Månatlig amortering:
-              </Typography>
-              <Typography variant="body1">
-                {monthlyAmortization
-                  ? formatNumberWithSpaces(monthlyAmortization)
-                  : "N/A"}{" "}
-                kr
-              </Typography>
+              <Typography variant="h6" sx={{ mt: 5 }}>Månatlig ränta:</Typography>
+              <Typography variant="body1">{formatNumberWithSpaces(monthlyInterest)} kr</Typography>
+
+              <Typography variant="h6" sx={{ mt: 3 }}>Månatlig amortering:</Typography>
+              <Typography variant="body1">{formatNumberWithSpaces(monthlyAmortization)} kr</Typography>
             </Box>
+          ) : (
+            <Typography variant="body1" sx={{ mt: 5, color: "gray" }}>
+              Fyll i alla fält och tryck på "Beräkna" för att se resultat.
+            </Typography>
           )}
         </Grid>
       </Grid>
