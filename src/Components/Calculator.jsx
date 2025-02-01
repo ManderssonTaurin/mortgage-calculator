@@ -73,6 +73,8 @@ const Calculator = () => {
     }
   };
 
+  const minimumDeposit = parseInt(propertyValue * 0.15, 10);
+
   return (
     <Box sx={{ p: 2 }}>
       <Grid container spacing={2}>
@@ -96,6 +98,10 @@ const Calculator = () => {
               onChange={handleSliderChange(setPropertyValue)}
               valueLabelDisplay="auto"
             />
+            {/* Minimum Deposit Text */}
+            <Typography variant="body2" sx={{ color: "gray", mt: 2 }}>
+              Minsta kontantinsats: {formatNumberWithSpaces(minimumDeposit)} kr
+            </Typography>
 
             {/* Deposit */}
             <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>Kontantinsats</Typography>
@@ -149,7 +155,7 @@ const Calculator = () => {
               value={interest}
               min={0.5}
               max={10}
-              step={0.1}
+              step={0.01}
               onChange={handleSliderChange(setInterest)}
               valueLabelDisplay="auto"
             />
@@ -160,9 +166,18 @@ const Calculator = () => {
             </Button>
           </Box>
         </Grid>
+        <Divider
+          orientation="vertical"
+          flexItem
+          sx={{
+            mx: { xs: 0, md: 2 },
+            borderColor: "grey.400",
+            display: { xs: "none", md: "block" },
+          }}
+        />
 
         {/* Right Column: Results */}
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={5}>
           {(monthlyInterest !== null && monthlyAmortization !== null) ? (
             <Box>
               <Typography variant="h6" sx={{ mt: 5 }}>Månatlig ränta:</Typography>
