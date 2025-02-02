@@ -97,6 +97,7 @@ const Calculator = () => {
               step={10000}
               onChange={handleSliderChange(setPropertyValue)}
               valueLabelDisplay="auto"
+              
             />
             {/* Minimum Deposit Text */}
             <Typography variant="body2" sx={{ color: "gray", mt: 2 }}>
@@ -148,15 +149,29 @@ const Calculator = () => {
               fullWidth
               sx={{ mb: 2 }}
               value={interest}
-              onChange={(e) => handleInputChange(e, setInterest)}
+              onChange={(e) => {
+                let value = e.target.value.replace(/\s/g, "").replace(",", "."); // Remove spaces & convert ',' to '.'
+                
+                // Allow empty input so users can type numbers manually
+                if (value === "") {
+                  setInterest("");
+                  return;
+                }
+
+                // Validate decimal input
+                if (/^\d*\.?\d*$/.test(value)) { // Allows "3", "3.", "3.4"
+                  setInterest(value);
+                }
+              }}
               inputProps={{ inputMode: "decimal", pattern: "[0-9]+([,\\.][0-9]+)?" }}
             />
+
             <Slider
-              value={interest}
+              value={parseFloat(interest) || 0} // Ensure a valid number for the slider
               min={0.5}
               max={10}
               step={0.01}
-              onChange={handleSliderChange(setInterest)}
+              onChange={(_, newValue) => setInterest(newValue.toString())} // Convert back to string
               valueLabelDisplay="auto"
             />
 
