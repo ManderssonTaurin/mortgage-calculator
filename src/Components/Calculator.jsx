@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { TextField, Box, Button, Typography, Divider, Grid, Slider } from "@mui/material";
+import { useEffect } from "react";
 
 const Calculator = () => {
   // Initial states
   const [propertyValue, setPropertyValue] = useState(2000000);
   const [deposit, setDeposit] = useState(300000);
-  const [monthlyIncome, setMonthlyIncome] = useState(70000);
+  const [monthlyIncome, setMonthlyIncome] = useState(20000);
   const [interest, setInterest] = useState(3.4);
   const [monthlyInterest, setMonthlyInterest] = useState(null);
   const [monthlyAmortization, setMonthlyAmortization] = useState(null);
@@ -29,6 +30,26 @@ const Calculator = () => {
   const handleSliderChange = (setState) => (event, newValue) => {
     setState(newValue);
   };
+
+// minimumDeposit = edge case when bostadens värde becomes less than kontantinsatsen 
+
+const handleDepositChange = (event, newValue) => { 
+  const minDeposit = propertyValue * 0.15;  // 15% of property value
+  const maxDeposit = propertyValue;         // Maximum deposit is full property value
+
+  let adjustedValue = Math.max(minDeposit, Math.min(newValue, maxDeposit));
+
+  setDeposit(adjustedValue);
+};
+
+useEffect(() => {
+  const minDeposit = propertyValue * 0.15;
+  if (deposit < minDeposit) {
+    setDeposit(minDeposit);
+  } else if (deposit > propertyValue) {
+    setDeposit(propertyValue);
+  }
+}, [propertyValue, deposit]);
 
   // Calculate amortization and interest
   const calculateAmortizationAndInterest = () => {
@@ -92,7 +113,7 @@ const Calculator = () => {
             />
             <Slider
               value={propertyValue}
-              min={500000}
+              min={100000}
               max={15000000}
               step={10000}
               onChange={handleSliderChange(setPropertyValue)}
@@ -111,15 +132,20 @@ const Calculator = () => {
               fullWidth
               sx={{ mb: 2 }}
               value={formatNumberWithSpaces(deposit)}
-              onChange={(e) => handleInputChange(e, setDeposit)}
+              onChange={(e) => {
+                let value = parseFloat(e.target.value.replace(/\s/g, ""));
+                if (!isNaN(value)) {
+                  setDeposit(Math.max(propertyValue * 0.15, Math.min(value, propertyValue)));
+                }
+              }}
               inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
             />
             <Slider
               value={deposit}
-              min={50000}
-              max={propertyValue}
+              min={propertyValue * 0.15} // Minimum 15% of property value
+              max={propertyValue} // Maximum cannot exceed property value
               step={10000}
-              onChange={handleSliderChange(setDeposit)}
+              onChange={(_, newValue) => setDeposit(Math.max(propertyValue * 0.15, Math.min(newValue, propertyValue)))}
               valueLabelDisplay="auto"
             />
 
@@ -135,7 +161,7 @@ const Calculator = () => {
             />
             <Slider
               value={monthlyIncome}
-              min={10000}
+              min={0}
               max={300000}
               step={5000}
               onChange={handleSliderChange(setMonthlyIncome)}
