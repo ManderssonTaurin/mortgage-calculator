@@ -20,11 +20,19 @@ const Calculator = () => {
 
   // Generic handler for input fields
   const handleInputChange = (e, setState) => {
-    const numericValue = parseFloat(e.target.value.replace(/\s/g, "").replace(",", "."));
+    let value = e.target.value.replace(/\s/g, "").replace(",", ".");
+  
+    if (value === "") {
+      setState(""); // Allow empty input while typing
+      return;
+    }
+  
+    const numericValue = parseFloat(value);
     if (!isNaN(numericValue)) {
       setState(numericValue);
     }
   };
+  
 
   // Generic handler for sliders
   const handleSliderChange = (setState) => (event, newValue) => {
@@ -33,23 +41,14 @@ const Calculator = () => {
 
 // minimumDeposit = edge case when bostadens värde becomes less than kontantinsatsen 
 
-const handleDepositChange = (event, newValue) => { 
-  const minDeposit = propertyValue * 0.15;  // 15% of property value
-  const maxDeposit = propertyValue;         // Maximum deposit is full property value
-
-  let adjustedValue = Math.max(minDeposit, Math.min(newValue, maxDeposit));
-
-  setDeposit(adjustedValue);
-};
-
 useEffect(() => {
   const minDeposit = propertyValue * 0.15;
-  if (deposit < minDeposit) {
-    setDeposit(minDeposit);
-  } else if (deposit > propertyValue) {
-    setDeposit(propertyValue);
+  
+  // Adjust deposit only if it's outside valid bounds
+  if (deposit < minDeposit || deposit > propertyValue) {
+    setDeposit((prevDeposit) => Math.max(minDeposit, Math.min(prevDeposit, propertyValue)));
   }
-}, [propertyValue, deposit]);
+}, [propertyValue, deposit]); // Runs when either value changes
 
   // Calculate amortization and interest
   const calculateAmortizationAndInterest = () => {
@@ -102,14 +101,33 @@ useEffect(() => {
         {/* Left Column: Input Fields */}
         <Grid item xs={12} md={6}>
           <Box>
-            <Typography variant="h6" sx={{ mb: 1 }}>Bostadens värde</Typography>
+            <Typography variant="h6" sx={{ mb: 1, color: "#000000" }}>Bostadens värde</Typography>
             <TextField
-              variant="outlined"
-              fullWidth
-              sx={{ mb: 2 }}
-              value={formatNumberWithSpaces(propertyValue)}
-              onChange={(e) => handleInputChange(e, setPropertyValue)}
-              inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+               variant="outlined"
+               fullWidth
+               sx={{ mb: 2,
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "#cbcbcb", // Default border color
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "#000000", // Border color on hover
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#000000", // Border color when focused
+                  },
+                  borderRadius: "8px", // Rounded corners
+                  
+                  },
+                  "& .MuiInputBase-input": {
+                    color: "#000000", // Text color
+                    fontSize: "16px",
+                    fontWeight: 500,
+                  },
+                }}
+               value={propertyValue === "" ? "" : formatNumberWithSpaces(propertyValue)}
+               onChange={(e) => handleInputChange(e, setPropertyValue)}
+               inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
             />
             <Slider
               value={propertyValue}
@@ -118,6 +136,33 @@ useEffect(() => {
               step={10000}
               onChange={handleSliderChange(setPropertyValue)}
               valueLabelDisplay="auto"
+              sx={{
+                color: "#54d4a0", // Change the color of the slider
+                height: 8, // Thickness of the track
+                "& .MuiSlider-thumb": {
+                  width: 24,
+                  height: 24,
+                  backgroundColor: "#54d4a0",
+                  border: "2px solid #54d4a0",
+                  "&:hover": {
+                    boxShadow: "0px 0px 0px 8px rgba(37, 126, 215, 0.16)",
+                  },
+                },
+                "& .MuiSlider-track": {
+                  border: "none", // Remove default border
+                },
+                "& .MuiSlider-rail": {
+                  opacity: 1,
+                  backgroundColor: "#f0f0f0",
+                },
+                "& .MuiSlider-valueLabel": {
+                  backgroundColor: "#1976d2",
+                  color: "#fff",
+                  borderRadius: "6px",
+                  opacity: 0
+                },
+  
+              }}
               
             />
             {/* Minimum Deposit Text */}
@@ -126,35 +171,119 @@ useEffect(() => {
             </Typography>
 
             {/* Deposit */}
-            <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>Kontantinsats</Typography>
+            <Typography variant="h6" sx={{ mt: 3, mb: 1, color: "#000000" }}>Kontantinsats</Typography>
             <TextField
               variant="outlined"
               fullWidth
-              sx={{ mb: 2 }}
-              value={formatNumberWithSpaces(deposit)}
+              sx={{ mb: 2,
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "#cbcbcb", // Default border color
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "#000000", // Border color on hover
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#000000", // Border color when focused
+                  },
+                  borderRadius: "8px", // Rounded corners
+                  
+                  },
+                  "& .MuiInputBase-input": {
+                    color: "#000000", // Text color
+                    fontSize: "16px",
+                    fontWeight: 500,
+                  },
+               }}
+              value={deposit === "" ? "" : formatNumberWithSpaces(deposit)}
               onChange={(e) => {
-                let value = parseFloat(e.target.value.replace(/\s/g, ""));
-                if (!isNaN(value)) {
-                  setDeposit(Math.max(propertyValue * 0.15, Math.min(value, propertyValue)));
+                let value = e.target.value.replace(/\s/g, ""); // Remove spaces
+            
+                if (value === "") {
+                  setDeposit(""); // Allow empty input
+                  return;
                 }
+            
+                let numericValue = parseFloat(value);
+                if (!isNaN(numericValue)) {
+                  setDeposit(numericValue);
+                }
+              }}
+              onBlur={() => {
+                // Apply min/max constraints when user leaves input field
+                setDeposit((prevDeposit) =>
+                  Math.max(propertyValue * 0.15, Math.min(prevDeposit, propertyValue))
+                );
               }}
               inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
             />
             <Slider
-              value={deposit}
-              min={propertyValue * 0.15} // Minimum 15% of property value
-              max={propertyValue} // Maximum cannot exceed property value
+              value={deposit || propertyValue * 0.15} // Ensure valid number
+              min={propertyValue * 0.15}
+              max={propertyValue}
               step={10000}
-              onChange={(_, newValue) => setDeposit(Math.max(propertyValue * 0.15, Math.min(newValue, propertyValue)))}
+              onChange={(_, newValue) => setDeposit(newValue)} // Allow smooth sliding
+              onChangeCommitted={() => {
+                // Enforce constraints when user releases the slider
+                setDeposit((prevDeposit) =>
+                  Math.max(propertyValue * 0.15, Math.min(prevDeposit, propertyValue))
+                );
+              }}
               valueLabelDisplay="auto"
+              sx={{
+                color: "#54d4a0", // Change the color of the slider
+                height: 8, // Thickness of the track
+                "& .MuiSlider-thumb": {
+                  width: 24,
+                  height: 24,
+                  backgroundColor: "#54d4a0",
+                  border: "2px solid #54d4a0",
+                  "&:hover": {
+                    boxShadow: "0px 0px 0px 8px rgba(37, 126, 215, 0.16)",
+                  },
+                },
+                "& .MuiSlider-track": {
+                  border: "none", // Remove default border
+                },
+                "& .MuiSlider-rail": {
+                  opacity: 1,
+                  backgroundColor: "#f0f0f0",
+                },
+                "& .MuiSlider-valueLabel": {
+                  backgroundColor: "#1976d2",
+                  color: "#fff",
+                  borderRadius: "6px",
+                  opacity: 0
+                },
+  
+              }}
             />
 
             {/* Monthly Income */}
-            <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>Hushållets totala månadsinkomst</Typography>
+            <Typography variant="h6" sx={{ mt: 3, mb: 1, color: "#000000" }}>Hushållets totala månadsinkomst</Typography>
             <TextField
               variant="outlined"
               fullWidth
-              sx={{ mb: 2 }}
+              sx={{ mb: 2,
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "#cbcbcb", // Default border color
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "#000000", // Border color on hover
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#000000", // Border color when focused
+                  },
+                  borderRadius: "8px", // Rounded corners
+                  
+                  },
+                  "& .MuiInputBase-input": {
+                    color: "#000000", // Text color
+                    fontSize: "16px",
+                    fontWeight: 500,
+                  },
+               }}
               value={formatNumberWithSpaces(monthlyIncome)}
               onChange={(e) => handleInputChange(e, setMonthlyIncome)}
               inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
@@ -166,14 +295,62 @@ useEffect(() => {
               step={5000}
               onChange={handleSliderChange(setMonthlyIncome)}
               valueLabelDisplay="auto"
+              sx={{
+                color: "#54d4a0", // Change the color of the slider
+                height: 8, // Thickness of the track
+                "& .MuiSlider-thumb": {
+                  width: 24,
+                  height: 24,
+                  backgroundColor: "#54d4a0",
+                  border: "2px solid #54d4a0",
+                  "&:hover": {
+                    boxShadow: "0px 0px 0px 8px rgba(37, 126, 215, 0.16)",
+                  },
+                },
+                "& .MuiSlider-track": {
+                  border: "none", // Remove default border
+                },
+                "& .MuiSlider-rail": {
+                  opacity: 1,
+                  backgroundColor: "#f0f0f0",
+                },
+                "& .MuiSlider-valueLabel": {
+                  backgroundColor: "#1976d2",
+                  color: "#fff",
+                  borderRadius: "6px",
+                  opacity: 0
+                },
+  
+              }}
             />
 
             {/* Interest Rate */}
-            <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>Exempelränta (%)</Typography>
+            <Typography variant="h6" sx={{ mt: 3, mb: 1, color: "#000000" }}>Exempelränta (%)</Typography>
             <TextField
               variant="outlined"
               fullWidth
-              sx={{ mb: 2 }}
+              sx={{ 
+              mb: 2, 
+              "& .MuiOutlinedInput-root": {
+              "& fieldset": {
+                borderColor: "#cbcbcb", // Default border color
+              },
+              "&:hover fieldset": {
+                borderColor: "#000000", // Border color on hover
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: "#000000", // Border color when focused
+              },
+              borderRadius: "8px", // Rounded corners
+              
+              },
+              "& .MuiInputBase-input": {
+                color: "#000000", // Text color
+                fontSize: "16px",
+                fontWeight: 500,
+              },
+
+              }}
               value={interest}
               onChange={(e) => {
                 let value = e.target.value.replace(/\s/g, "").replace(",", "."); // Remove spaces & convert ',' to '.'
@@ -199,10 +376,40 @@ useEffect(() => {
               step={0.01}
               onChange={(_, newValue) => setInterest(newValue.toString())} // Convert back to string
               valueLabelDisplay="auto"
+              sx={{
+                color: "#54d4a0", // Change the color of the slider
+                height: 8, // Thickness of the track
+                "& .MuiSlider-thumb": {
+                  width: 24,
+                  height: 24,
+                  backgroundColor: "#54d4a0",
+                  border: "2px solid #54d4a0",
+                  "&:hover": {
+                    boxShadow: "0px 0px 0px 8px rgba(37, 126, 215, 0.16)",
+                  },
+                },
+                "& .MuiSlider-track": {
+                  border: "none", // Remove default border
+                },
+                "& .MuiSlider-rail": {
+                  opacity: 1,
+                  backgroundColor: "#f0f0f0",
+                },
+                "& .MuiSlider-valueLabel": {
+                  backgroundColor: "#1976d2",
+                  color: "#fff",
+                  borderRadius: "6px",
+                  opacity: 0
+                },
+  
+              }}
             />
 
             {/* Calculate Button */}
-            <Button variant="contained" sx={{ mt: 3 }} onClick={calculateAmortizationAndInterest}>
+            <Button variant="contained" 
+            sx={{ mt: 3, backgroundColor: "#000000", color: "#ffffff"
+
+             }} onClick={calculateAmortizationAndInterest}>
               Beräkna
             </Button>
           </Box>
@@ -211,6 +418,7 @@ useEffect(() => {
           orientation="vertical"
           flexItem
           sx={{
+            mt: 3, 
             mx: { xs: 0, md: 2 },
             borderColor: "grey.400",
             display: { xs: "none", md: "block" },
