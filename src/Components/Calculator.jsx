@@ -10,6 +10,8 @@ const Calculator = () => {
   const [interest, setInterest] = useState(3.4);
   const [monthlyInterest, setMonthlyInterest] = useState(null);
   const [monthlyAmortization, setMonthlyAmortization] = useState(null);
+  const [amortizationRate, setAmortizationRate] = useState(null); 
+  const [totalCost, setTotalCost] = useState(null)
 
   // Function to format numbers with spaces
   const formatNumberWithSpaces = (value) => {
@@ -74,23 +76,29 @@ useEffect(() => {
       annualAmortizationRate += 0.01;
     }
 
-    console.log("LTV:", ltv);
-    console.log("Annual Amortization Rate:", annualAmortizationRate);
+  
 
     const monthlyInterestValue = (loanAmount * (interest / 100)) / 12;
     const monthlyAmortizationValue = (loanAmount * annualAmortizationRate) / 12;
 
-    console.log("Monthly Interest Value:", monthlyInterestValue);
-    console.log("Monthly Amortization Value:", monthlyAmortizationValue);
+
+   
 
     // Check for invalid values before updating state
     if (!isNaN(monthlyInterestValue) && !isNaN(monthlyAmortizationValue)) {
       setMonthlyInterest(monthlyInterestValue.toFixed(0));
       setMonthlyAmortization(monthlyAmortizationValue.toFixed(0));
-    } else {
-      setMonthlyInterest(null);
-      setMonthlyAmortization(null);
-    }
+      setAmortizationRate((annualAmortizationRate * 100).toFixed(0)); // Convert to percentage
+    
+    // Calculate Total Monthly Cost**
+    const totalMonthlyCost = monthlyInterestValue + monthlyAmortizationValue;
+    setTotalCost(totalMonthlyCost.toFixed(0));
+  } else {
+    setMonthlyInterest(null);
+    setMonthlyAmortization(null);
+    setTotalCost(null);
+  }
+    
   };
 
   const minimumDeposit = parseInt(propertyValue * 0.15, 10);
@@ -427,13 +435,20 @@ useEffect(() => {
 
         {/* Right Column: Results */}
         <Grid item xs={12} md={5}>
-          {(monthlyInterest !== null && monthlyAmortization !== null) ? (
+          {(monthlyInterest !== null && monthlyAmortization !== null && amortizationRate !==null ) ? (
             <Box>
-              <Typography variant="h6" sx={{ mt: 5 }}>Månatlig ränta:</Typography>
-              <Typography variant="body1">{formatNumberWithSpaces(monthlyInterest)} kr</Typography>
-
-              <Typography variant="h6" sx={{ mt: 3 }}>Månatlig amortering:</Typography>
-              <Typography variant="body1">{formatNumberWithSpaces(monthlyAmortization)} kr</Typography>
+              <Box sx={{backgroundColor: "#ffffff", display: "flex", justifyContent: "center", alignItems: "center", flexDirection:"column", paddingBottom: 2 }}>
+                <Typography variant="h5" sx={{ mt: 3, color: "#000000"}}>Total månatlig kostnad</Typography>
+                <Typography variant="h6"sx={{color: "#54d4a0"}} >{formatNumberWithSpaces(totalCost)} kr</Typography>
+              </Box>
+              <Box sx={{backgroundColor: "#f6f6f6", display: "flex", justifyContent: "center", alignItems: "center", flexDirection:"column", padding: 2 }} >
+                <Typography variant="h6" sx={{ }}>Månatlig ränta</Typography>
+                <Typography variant="body1">{formatNumberWithSpaces(monthlyInterest)} kr</Typography>
+              </Box>
+              
+              
+              <Typography variant="h6" sx={{mt: 3}}>Månatlig amortering</Typography>
+              <Typography variant="body1">{formatNumberWithSpaces(monthlyAmortization)} kr {amortizationRate}% amortering</Typography>
             </Box>
           ) : (
             <Typography variant="body1" sx={{ mt: 5, color: "gray" }}>
