@@ -3,7 +3,7 @@ import { TextField, Box, Button, Typography, Divider, Grid, Slider } from "@mui/
 import { useEffect } from "react";
 
 const Calculator = () => {
-  // Initial states
+  
   const [propertyValue, setPropertyValue] = useState(2000000);
   const [deposit, setDeposit] = useState(300000);
   const [monthlyIncome, setMonthlyIncome] = useState(20000);
@@ -59,10 +59,7 @@ useEffect(() => {
     const loanAmount = propertyValue - deposit;
     const annualIncome = monthlyIncome * 12;
     const debtToIncomeRatio = loanAmount / annualIncome;
-    console.log("Loan Amount:", loanAmount);
-    console.log("Annual Income:", annualIncome);
-    console.log("Debt-to-Income Ratio:", debtToIncomeRatio);
-
+  
     const ltv = loanAmount / propertyValue;
     let annualAmortizationRate = 0;
 
@@ -76,7 +73,6 @@ useEffect(() => {
       annualAmortizationRate += 0.01;
     }
 
-  
 
     const monthlyInterestValue = (loanAmount * (interest / 100)) / 12;
     const monthlyAmortizationValue = (loanAmount * annualAmortizationRate) / 12;
@@ -104,7 +100,7 @@ useEffect(() => {
   const minimumDeposit = parseInt(propertyValue * 0.15, 10);
 
   return (
-    <Box sx={{ p: 2 }}>
+    <Box sx={{ mt: 2 }}>
       <Grid container spacing={0}>
         {/* Left Column: Input Fields */}
         <Grid item xs={12} md={6}>
@@ -437,23 +433,50 @@ useEffect(() => {
         <Grid item xs={12} md={5}>
           {(monthlyInterest !== null && monthlyAmortization !== null && amortizationRate !==null ) ? (
             <Box>
-              <Box sx={{backgroundColor: "#ffffff", display: "flex", justifyContent: "center", alignItems: "center", flexDirection:"column", paddingBottom: 2 }}>
+              <Box sx={{backgroundColor: "#ffffff", display: "flex", justifyContent: "center", alignItems: "center", 
+                flexDirection:"column", paddingBottom: 2, mt: { xs: 2, md: 0 }, }}>
                 <Typography variant="h5" sx={{ mt: 1, color: "#000000"}}>Total månatlig kostnad</Typography>
                 <Typography variant="h4"sx={{color: "#54d4a0"}} >{formatNumberWithSpaces(totalCost)} kr</Typography>
               </Box>
-              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexDirection:"row"}} >
-                <Box sx={{display:"flex", flexDirection: "column", backgroundColor: "#ececec", padding: 2}}>
-                  <Typography variant="h7" sx={{ color: "#000000"}}>Månatlig ränta</Typography>
-                  <Typography variant="h5" sx={{color: "#000000"}}>{formatNumberWithSpaces(monthlyInterest)} kr</Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  flexDirection: { xs: "column", md: "row" }, 
+                  gap: 2, 
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    backgroundColor: "#ececec",
+                    padding: 2,
+                    borderRadius: "8px",
+                    width: { xs: "100%", md: "48%" }, 
+                    textAlign: "center", 
+                  }}
+                >
+                  <Typography variant="h6" sx={{ color: "#000000" }}>Månatlig ränta</Typography>
+                  <Typography variant="h5" sx={{ color: "#000000" }}>{formatNumberWithSpaces(monthlyInterest)} kr</Typography>
                 </Box>
-                <Box sx={{display:"flex", flexDirection: "column", backgroundColor: "rgb(233, 255, 246)", padding: 2}} >
-                  <Typography variant="h7" sx={{color: "#000000"}} >Månatlig {amortizationRate}% amortering</Typography>
-                  <Typography variant="h5" sx={{color: "#000000"}} >{formatNumberWithSpaces(monthlyAmortization)} kr </Typography>
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    backgroundColor: "rgb(233, 255, 246)",
+                    padding: 2,
+                    borderRadius: "8px",
+                    width: { xs: "100%", md: "68%" }, // Full width on small screens, 48% on larger screens
+                    textAlign: "center",
+                  }}
+                >
+                  <Typography variant="h6" sx={{ color: "#000000" }}>Månatlig {amortizationRate}% amortering</Typography>
+                  <Typography variant="h5" sx={{ color: "#000000" }}>{formatNumberWithSpaces(monthlyAmortization)} kr</Typography>
                 </Box>
               </Box>
-              
-              
-              
             </Box>
           ) : (
             <Typography variant="body1" sx={{ mt: 5, color: "gray" }}>
