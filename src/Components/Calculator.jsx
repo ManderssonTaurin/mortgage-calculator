@@ -105,7 +105,7 @@ useEffect(() => {
 
   return (
     <Box sx={{ p: 2 }}>
-      <Grid container spacing={2}>
+      <Grid container spacing={0}>
         {/* Left Column: Input Fields */}
         <Grid item xs={12} md={6}>
           <Box>
@@ -438,17 +438,22 @@ useEffect(() => {
           {(monthlyInterest !== null && monthlyAmortization !== null && amortizationRate !==null ) ? (
             <Box>
               <Box sx={{backgroundColor: "#ffffff", display: "flex", justifyContent: "center", alignItems: "center", flexDirection:"column", paddingBottom: 2 }}>
-                <Typography variant="h5" sx={{ mt: 3, color: "#000000"}}>Total månatlig kostnad</Typography>
-                <Typography variant="h6"sx={{color: "#54d4a0"}} >{formatNumberWithSpaces(totalCost)} kr</Typography>
+                <Typography variant="h5" sx={{ mt: 1, color: "#000000"}}>Total månatlig kostnad</Typography>
+                <Typography variant="h4"sx={{color: "#54d4a0"}} >{formatNumberWithSpaces(totalCost)} kr</Typography>
               </Box>
-              <Box sx={{backgroundColor: "#f6f6f6", display: "flex", justifyContent: "center", alignItems: "center", flexDirection:"column", padding: 2 }} >
-                <Typography variant="h6" sx={{ }}>Månatlig ränta</Typography>
-                <Typography variant="body1">{formatNumberWithSpaces(monthlyInterest)} kr</Typography>
+              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexDirection:"row"}} >
+                <Box sx={{display:"flex", flexDirection: "column", backgroundColor: "#ececec", padding: 2}}>
+                  <Typography variant="h7" sx={{ color: "#000000"}}>Månatlig ränta</Typography>
+                  <Typography variant="h5" sx={{color: "#000000"}}>{formatNumberWithSpaces(monthlyInterest)} kr</Typography>
+                </Box>
+                <Box sx={{display:"flex", flexDirection: "column", backgroundColor: "rgb(233, 255, 246)", padding: 2}} >
+                  <Typography variant="h7" sx={{color: "#000000"}} >Månatlig {amortizationRate}% amortering</Typography>
+                  <Typography variant="h5" sx={{color: "#000000"}} >{formatNumberWithSpaces(monthlyAmortization)} kr </Typography>
+                </Box>
               </Box>
               
               
-              <Typography variant="h6" sx={{mt: 3}}>Månatlig amortering</Typography>
-              <Typography variant="body1">{formatNumberWithSpaces(monthlyAmortization)} kr {amortizationRate}% amortering</Typography>
+              
             </Box>
           ) : (
             <Typography variant="body1" sx={{ mt: 5, color: "gray" }}>
