@@ -468,7 +468,7 @@ useEffect(() => {
                     flexDirection: "column",
                     backgroundColor: "rgb(233, 255, 246)",
                     padding: 2,
-                    marginBottom: 2,
+                    mb: { xs: 2, md: 0 }, 
                     borderRadius: "8px",
                     width: { xs: "100%", md: "68%" }, // Full width on small screens, 48% on larger screens
                     textAlign: "center",
