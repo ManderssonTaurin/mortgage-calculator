@@ -468,13 +468,14 @@ useEffect(() => {
                     flexDirection: "column",
                     backgroundColor: "rgb(233, 255, 246)",
                     padding: 2,
+                    marginBottom: 2,
                     borderRadius: "8px",
                     width: { xs: "100%", md: "68%" }, // Full width on small screens, 48% on larger screens
                     textAlign: "center",
                   }}
                 >
                   <Typography variant="h6" sx={{ color: "#000000" }}>Månatlig {amortizationRate}% amortering</Typography>
-                  <Typography variant="h5" sx={{ color: "#000000" }}>{formatNumberWithSpaces(monthlyAmortization)} kr</Typography>
+                  <Typography variant="h5" sx={{ color: "#000000"}}>{formatNumberWithSpaces(monthlyAmortization)} kr</Typography>
                 </Box>
               </Box>
             </Box>
