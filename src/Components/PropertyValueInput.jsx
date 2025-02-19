@@ -1,6 +1,6 @@
 import { TextField, Typography, Slider, Box } from "@mui/material";
 
-const PropertyValueInput = ({ propertyValue, setPropertyValue, formatNumberWithSpaces }) => {
+const PropertyValueInput = ({ propertyValue, setPropertyValue, formatNumberWithSpaces, minimumDeposit }) => {
     return ( 
         <Box>
             <Typography variant="h6" sx={{ mb: 1, color: "#000000" }}>
@@ -68,10 +68,10 @@ const PropertyValueInput = ({ propertyValue, setPropertyValue, formatNumberWithS
   
               }}
             />
-            {/* Minimum Deposit Text 
-            //<Typography variant="body2" sx={{ color: "gray", mt: 2 }}>
+            
+            <Typography variant="body2" sx={{ color: "gray", mt: 2 }}>
                 Minsta kontantinsats: {formatNumberWithSpaces(minimumDeposit)} kr
-            </Typography>*/}
+            </Typography>
       </Box>
      );
 }

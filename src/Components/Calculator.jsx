@@ -26,26 +26,8 @@ const Calculator = () => {
       .replace(/\B(?=(\d{3})+(?!\d))/g, " "); // Add spaces for thousands
   };
 
-  // Generic handler for input fields
-  const handleInputChange = (e, setState) => {
-    let value = e.target.value.replace(/\s/g, "").replace(",", ".");
-  
-    if (value === "") {
-      setState(""); // Allow empty input while typing
-      return;
-    }
-  
-    const numericValue = parseFloat(value);
-    if (!isNaN(numericValue)) {
-      setState(numericValue);
-    }
-  };
-  
 
-  // Generic handler for sliders
-  const handleSliderChange = (setState) => (event, newValue) => {
-    setState(newValue);
-  };
+
 
 // minimumDeposit = edge case when bostadens värde becomes less than kontantinsatsen 
 
@@ -103,15 +85,20 @@ useEffect(() => {
     
   };
 
-  const minimumDeposit = parseInt(propertyValue * 0.15, 10);
+ 
 
   return (
     <Box sx={{ mt: 2 }}>
 
         {/* Right Column: Results */}
-        <Grid container spacing={2}>
+        <Grid container spacing={0}>
           <Grid item xs={12} md={6}>
-            <PropertyValueInput propertyValue={propertyValue} setPropertyValue={setPropertyValue} formatNumberWithSpaces={formatNumberWithSpaces} />
+            <PropertyValueInput 
+            propertyValue={propertyValue} 
+            setPropertyValue={setPropertyValue} 
+            formatNumberWithSpaces={formatNumberWithSpaces} 
+            minimumDeposit={propertyValue * 0.15} 
+            />
             <DepositInput deposit={deposit} setDeposit={setDeposit} propertyValue={propertyValue} formatNumberWithSpaces={formatNumberWithSpaces} />
             <IncomeInput monthlyIncome={monthlyIncome} setMonthlyIncome={setMonthlyIncome} formatNumberWithSpaces={formatNumberWithSpaces} />
             <InterestInput interest={interest} setInterest={setInterest} />

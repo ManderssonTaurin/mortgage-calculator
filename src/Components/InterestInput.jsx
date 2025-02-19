@@ -1,6 +1,22 @@
 import { TextField, Typography, Slider, Box } from "@mui/material";
 
 const InterestInput = ({ interest, setInterest }) => {
+
+  const handleInterestChange = (e) => {
+    let value = e.target.value.replace(",", "."); // Convert ',' to '.'
+
+    // allow only valid decimal numbers (no letters)
+    if(/^\d*\.?\d*$/.test(value)) {
+      setInterest(value);
+    }
+    
+  }
+
+  const handleBlur = () => {
+    if (interest && interest !== "") {  // Ensure it's not null or empty
+      setInterest(parseFloat(String(interest).replace(",", ".")).toFixed(2)); // Format to 2 decimals
+    }
+  }
     return ( 
         <Box>
             <Typography variant="h6" sx={{ mt: 3, mb: 1, color: "#000000" }}>
@@ -10,7 +26,8 @@ const InterestInput = ({ interest, setInterest }) => {
             variant="outlined"
             fullWidth
             value={interest}
-            onChange={(e) => setInterest(e.target.value)}
+            onChange={handleInterestChange}
+            onBlur={handleBlur} // Format on blur
             inputProps={{ inputMode: "decimal", pattern: "[0-9]+([,\\.][0-9]+)?" }}
             sx={{
                 mb: 2, 
@@ -35,11 +52,11 @@ const InterestInput = ({ interest, setInterest }) => {
             }}
             />
             <Slider
-            value={parseFloat(interest) || 0}
+            value={Number(interest) || 0} // Ensure Slider gets a valid number
             min={0.5}
             max={10}
             step={0.01}
-            onChange={(_, newValue) => setInterest(newValue.toString())}
+            onChange={(_, newValue) => setInterest(newValue.toFixed(2))} // Format to 2 decimals}
             valueLabelDisplay="auto"
             sx={{
                 color: "#54d4a0", // Change the color of the slider
