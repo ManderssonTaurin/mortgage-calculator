@@ -1,8 +1,22 @@
-import { Typography, Box } from "@mui/material";
+import { Typography, Box, Paper } from "@mui/material";
 
 const Results = ({ totalCost, monthlyInterest, monthlyAmortization, amortizationRate, formatNumberWithSpaces }) => {
     return ( 
-        <Box>   
+        <Box
+        sx={{
+          mt: {xs: 4, md: 0},
+          minHeight: "100vh", // Ensures full-page background
+          
+        }}
+        >  
+          <Paper
+          elevation={8}
+          sx={{
+            p: 3, 
+            borderRadius: "12px"
+            
+          }}
+          >
             <Box sx={{backgroundColor: "#ffffff", display: "flex", justifyContent: "center", alignItems: "center", 
                 flexDirection:"column", paddingBottom: 2, mt: { xs: 2, md: 0 }, }}>
                 <Typography variant="h5" sx={{ mt: 1, color: "#000000"}}>Total månatlig kostnad</Typography>
@@ -28,8 +42,8 @@ const Results = ({ totalCost, monthlyInterest, monthlyAmortization, amortization
                     textAlign: "center", 
                   }}
                 >
-                  <Typography variant="h6" sx={{ color: "#000000" }}>Månatlig ränta</Typography>
-                  <Typography variant="h5" sx={{ color: "#000000" }}>{formatNumberWithSpaces(monthlyInterest)} kr</Typography>
+                  <Typography variant="h7" sx={{ color: "#000000" }}>Månatlig ränta</Typography>
+                  <Typography variant="h6" sx={{ color: "#000000" }}>{formatNumberWithSpaces(monthlyInterest)} kr</Typography>
                 </Box>
 
                 <Box
@@ -44,11 +58,11 @@ const Results = ({ totalCost, monthlyInterest, monthlyAmortization, amortization
                     textAlign: "center",
                   }}
                 >
-                  <Typography variant="h6" sx={{ color: "#000000" }}>Månatlig {amortizationRate}% amortering</Typography>
-                  <Typography variant="h5" sx={{ color: "#000000"}}>{formatNumberWithSpaces(monthlyAmortization)} kr</Typography>
+                  <Typography variant="h7" sx={{ color: "#000000" }}>Månatlig {amortizationRate}% amortering</Typography>
+                  <Typography variant="h6" sx={{ color: "#000000"}}>{formatNumberWithSpaces(monthlyAmortization)} kr</Typography>
                 </Box>
             </Box>
-            
+          </Paper> 
         </Box>
      );
 }

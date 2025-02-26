@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TextField, Box, Button, Typography, Divider, Grid, Slider } from "@mui/material";
+import { TextField, Box, Button, Typography, Divider, Grid, Slider, Paper } from "@mui/material";
 import { useEffect } from "react";
 import PropertyValueInput from "./PropertyValueInput";
 import DepositInput from "./DepositInput";
@@ -88,23 +88,34 @@ useEffect(() => {
  
 
   return (
-    <Box sx={{ mt: 2 }}>
+    <Box sx={{ mt: 2, 
+      mb: 4,
+    }}
+    >
 
         {/* Right Column: Results */}
         <Grid container spacing={0}>
           <Grid item xs={12} md={6}>
-            <PropertyValueInput 
-            propertyValue={propertyValue} 
-            setPropertyValue={setPropertyValue} 
-            formatNumberWithSpaces={formatNumberWithSpaces} 
-            minimumDeposit={propertyValue * 0.15} 
-            />
-            <DepositInput deposit={deposit} setDeposit={setDeposit} propertyValue={propertyValue} formatNumberWithSpaces={formatNumberWithSpaces} />
-            <IncomeInput monthlyIncome={monthlyIncome} setMonthlyIncome={setMonthlyIncome} formatNumberWithSpaces={formatNumberWithSpaces} />
-            <InterestInput interest={interest} setInterest={setInterest} />
-            <Button variant="contained" sx={{ mt: 3, backgroundColor: "#000000", color: "#ffffff" }} onClick={calculateAmortizationAndInterest}>
-              Beräkna
-            </Button>
+            <Paper
+            elevation={8}
+            sx={{
+              p: 3, 
+              borderRadius: "12px"
+            }}
+            >
+              <PropertyValueInput 
+              propertyValue={propertyValue} 
+              setPropertyValue={setPropertyValue} 
+              formatNumberWithSpaces={formatNumberWithSpaces} 
+              minimumDeposit={propertyValue * 0.15} 
+              />
+              <DepositInput deposit={deposit} setDeposit={setDeposit} propertyValue={propertyValue} formatNumberWithSpaces={formatNumberWithSpaces} />
+              <IncomeInput monthlyIncome={monthlyIncome} setMonthlyIncome={setMonthlyIncome} formatNumberWithSpaces={formatNumberWithSpaces} />
+              <InterestInput interest={interest} setInterest={setInterest} />
+              <Button variant="contained" sx={{ mt: 3, backgroundColor: "#000000", color: "#ffffff" }} onClick={calculateAmortizationAndInterest}>
+                Beräkna
+              </Button>
+            </Paper>
           </Grid>
           <Divider orientation="vertical" flexItem sx={{ mx: 2, borderColor: "grey.400", display: { xs: "none", md: "block" } }} />
           <Grid item xs={12} md={5}>
