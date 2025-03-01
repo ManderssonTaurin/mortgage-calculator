@@ -7,7 +7,7 @@ import InterestInput from "./InterestInput";
 import Results from "./Results";
 
 const Calculator = () => {
-  const [propertyValue, setPropertyValue] = useState("");
+  const [propertyValue, setPropertyValue] = useState(0);
   const [deposit, setDeposit] = useState("");
   const [monthlyIncome, setMonthlyIncome] = useState("");
   const [interest, setInterest] = useState(3.4);

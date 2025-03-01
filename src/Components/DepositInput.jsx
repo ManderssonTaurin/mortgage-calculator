@@ -1,28 +1,37 @@
 import { TextField, Typography, Slider, Box } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const DepositInput = ({ deposit, setDeposit, propertyValue, formatNumberWithSpaces }) => {
     const minDeposit = propertyValue * 0.15;
-    const [inputValue, setInputValue] = useState(formatNumberWithSpaces(deposit)); // Keep raw input as a string
+    const [inputValue, setInputValue] = useState(formatNumberWithSpaces(deposit));
+
+    // **Update deposit when propertyValue changes**
+    useEffect(() => {
+        if (deposit < minDeposit || deposit > propertyValue) {
+            setDeposit(minDeposit);
+            setInputValue(formatNumberWithSpaces(minDeposit)); // Keep UI synced
+        }
+    }, [propertyValue]); // Runs whenever propertyValue changes
 
     const handleDepositChange = (e) => {
-        let value = e.target.value.replace(/\s/g, ""); // Remove existing spaces
+        let value = e.target.value.replace(/\s/g, ""); // Remove spaces
 
         if (value === "") {
             setInputValue(""); // Allow user to clear input temporarily
             return;
         }
 
-        if (/^\d+$/.test(value)) { // Ensure only numbers
-            setInputValue(formatNumberWithSpaces(value)); // Apply formatting immediately
+        if (/^\d+$/.test(value)) { // Only allow numbers
+            setInputValue(formatNumberWithSpaces(value)); // Update input field
+            setDeposit(Number(value)); // Update deposit state instantly
         }
     };
 
     const handleDepositBlur = () => {
-        let numericValue = parseFloat(inputValue.replace(/\s/g, "")); // Convert input to a number
+        let numericValue = parseFloat(inputValue.replace(/\s/g, "")); // Convert to number
 
         if (isNaN(numericValue) || numericValue < minDeposit) {
-            numericValue = minDeposit; // Set minimum value if too low
+            numericValue = minDeposit; // Enforce minimum deposit
         } else if (numericValue > propertyValue) {
             numericValue = propertyValue; // Prevent deposit from exceeding property value
         }
@@ -41,9 +50,10 @@ const DepositInput = ({ deposit, setDeposit, propertyValue, formatNumberWithSpac
                 fullWidth
                 value={inputValue}
                 onChange={handleDepositChange}
-                onBlur={handleDepositBlur} // Validate input when user exits field
+                onBlur={handleDepositBlur}
                 inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
-                sx={{ mb: 2,
+                sx={{
+                    mb: 2,
                     "& .MuiOutlinedInput-root": {
                         "& fieldset": { borderColor: "#cbcbcb" },
                         "&:hover fieldset": { borderColor: "#000000" },
@@ -64,8 +74,7 @@ const DepositInput = ({ deposit, setDeposit, propertyValue, formatNumberWithSpac
                 step={10000}
                 onChange={(_, newValue) => {
                     setDeposit(newValue);
-                    setInputValue(formatNumberWithSpaces(newValue)); // Update input field when using slider
-                    // function för att ändra värden utan att klicka på knappen! 
+                    setInputValue(formatNumberWithSpaces(newValue)); // Ensure input updates instantly
                 }}
                 valueLabelDisplay="auto"
                 sx={{
@@ -80,12 +89,6 @@ const DepositInput = ({ deposit, setDeposit, propertyValue, formatNumberWithSpac
                     },
                     "& .MuiSlider-track": { border: "none" },
                     "& .MuiSlider-rail": { opacity: 1, backgroundColor: "#f0f0f0" },
-                    "& .MuiSlider-valueLabel": {
-                        backgroundColor: "#1976d2",
-                        color: "#fff",
-                        borderRadius: "6px",
-                        opacity: 0,
-                    },
                 }}
             />
         </Box>

@@ -37,7 +37,7 @@ const IncomeInput = ({ monthlyIncome, setMonthlyIncome, formatNumberWithSpaces }
             value={monthlyIncome}
             min={0}
             max={300000}
-            step={5000}
+            step={500}
             onChange={(_, newValue) => setMonthlyIncome(newValue)}
             valueLabelDisplay="auto"
             sx={{
