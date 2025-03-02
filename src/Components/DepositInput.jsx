@@ -69,7 +69,7 @@ const DepositInput = ({ deposit, setDeposit, propertyValue, formatNumberWithSpac
             />
             <Slider
                 value={deposit}
-                min={minDeposit}
+                min={0}
                 max={propertyValue}
                 step={10000}
                 onChange={(_, newValue) => {
