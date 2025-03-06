@@ -10,7 +10,7 @@ const Results = ({ totalCost, monthlyInterest, monthlyAmortization, amortization
         }}
         >  
           <Paper
-          elevation={8}
+          elevation={2}
           sx={{
             p: 3, 
             borderRadius: "12px"

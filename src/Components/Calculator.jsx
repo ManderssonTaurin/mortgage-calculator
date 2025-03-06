@@ -5,6 +5,8 @@ import DepositInput from "./DepositInput";
 import IncomeInput from "./IncomeInput";
 import InterestInput from "./InterestInput";
 import Results from "./Results";
+import Contact from "./Contact";
+// import "./Calculator.css"
 
 const Calculator = () => {
   const [propertyValue, setPropertyValue] = useState(0);
@@ -72,7 +74,7 @@ const Calculator = () => {
     <Box sx={{ mt: 2, mb: 4 }}>
       <Grid container spacing={0}>
         <Grid item xs={12} md={6}>
-          <Paper elevation={8} sx={{ p: 3, borderRadius: "12px" }}>
+          <Paper elevation={2} sx={{ p: 3, borderRadius: "12px" }}>
             <PropertyValueInput
               propertyValue={propertyValue}
               setPropertyValue={setPropertyValue}
@@ -96,22 +98,33 @@ const Calculator = () => {
         <Divider
           orientation="vertical"
           flexItem
-          sx={{ mx: 2, borderColor: "grey.400", display: { xs: "none", md: "block" } }}
+          sx={{ mx: 4, borderColor: "grey.400", display: { xs: "none", md: "block" } }}
         />
-        <Grid item xs={12} md={5}>
-          {monthlyInterest !== null && monthlyAmortization !== null && amortizationRate !== null ? (
+        <Grid 
+          item 
+          xs={12} 
+          md={5} 
+          sx={{ 
+            display: "flex", 
+            flexDirection: "column",
+            alignItems: "flex-start", 
+            justifyContent: "flex-start", 
+            minHeight: 0,
+          }}
+        >
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, width: "100%", minHeight: 0, }}>
             <Results
               totalCost={totalCost}
               monthlyInterest={monthlyInterest}
               monthlyAmortization={monthlyAmortization}
               amortizationRate={amortizationRate}
               formatNumberWithSpaces={formatNumberWithSpaces}
+
             />
-          ) : (
-            <Typography variant="body1" sx={{ mt: 5, color: "gray" }}>
-              Fyll i alla fält för att se resultat.
-            </Typography>
-          )}
+            {/* <Box sx={{ mt: 2 }}> 
+              Hello!
+            </Box> */}
+          </Box> 
         </Grid>
       </Grid>
     </Box>
